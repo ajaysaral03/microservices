@@ -15,53 +15,40 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    // ✅ Password encoder for any user authentication (optional)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ Enable CORS
+    // ✅ CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",  // local dev frontend
-                "https://ajaysaral03.github.io" // GitHub Pages frontend
+                "http://localhost:5173",             // Local React frontend
+                "https://ajaysaral03.github.io"     // GitHub Pages frontend
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // apply to all endpoints
+        source.registerCorsConfiguration("/**", configuration); // Apply to all endpoints
         return source;
     }
 
+    // ✅ Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/users/**",
-                                "/api/categories/**",
-                                "/api/subcategories/**",
-                                "/api/products/**",
-                                "/api/carts/**",
-                                "/api/orders/**"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/uploads/**",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**"
-                        ).permitAll()
-                        .anyRequest().permitAll() // allow everything else
+                        .anyRequest().permitAll() // Allow all requests
                 )
-                .httpBasic(basic -> basic.disable()) // Disable Basic Auth
-                .formLogin(form -> form.disable());  // Disable Form login
+                .httpBasic(basic -> basic.disable()) // Disable basic auth
+                .formLogin(form -> form.disable());  // Disable form login
 
         return http.build();
     }
