@@ -9,4 +9,5 @@ public interface SubCategoryService {
     void deleteSubCategory(String id);
     SubCategoryDto getSubCategory(String id);
     List<SubCategoryDto> getAllSubCategories();
+    long getSubCategoriesCount();
 }

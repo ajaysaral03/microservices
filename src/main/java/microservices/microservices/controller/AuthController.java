@@ -33,7 +33,6 @@ public class AuthController {
                         new ApiResponse<>("Email already exists"));
             }
 
-            // Hash password before saving
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
             } else {
@@ -41,20 +40,16 @@ public class AuthController {
                         new ApiResponse<>("Password cannot be empty"));
             }
 
-            // Set default status (1 = active)
-            if (user.getStatus() == null) {
-                user.setStatus(1);
-            }
+            if (user.getStatus() == null) user.setStatus(1); // active by default
 
             User savedUser = userRepository.save(user);
             return ResponseEntity.ok(new ApiResponse<>("User registered successfully", savedUser));
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(e.getMessage()));
         }
     }
 
-    // ✅ LOGIN
+    // ✅ LOGIN (role only from DB)
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
@@ -64,20 +59,35 @@ public class AuthController {
                     new ApiResponse<>("Invalid email or password"));
         }
 
-        // Check if user is active
         if (user.getStatus() == null || user.getStatus() != 1) {
             return ResponseEntity.badRequest().body(
                     new ApiResponse<>("User is not active"));
         }
 
-        // Prepare login response
+        // ✅ Role always taken from DB
+        String role = user.getRole();
+        if (role == null || role.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ApiResponse<>("User does not have a role assigned"));
+        }
+
+        // ✅ Generate token (UUID for now, replace with JWT later)
+        String token = java.util.UUID.randomUUID().toString();
+
         Map<String, Object> loginData = new HashMap<>();
         loginData.put("id", user.getId());
         loginData.put("name", user.getName());
         loginData.put("email", user.getEmail());
-        loginData.put("role", user.getRole());
+        loginData.put("role", role);
         loginData.put("status", user.getStatus() == 1 ? "active" : "inactive");
+        loginData.put("token", token);
 
         return ResponseEntity.ok(new ApiResponse<>("Login successful", loginData));
+    }
+
+    // ✅ LOGOUT
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout() {
+        return ResponseEntity.ok(new ApiResponse<>("Logged out successfully"));
     }
 }

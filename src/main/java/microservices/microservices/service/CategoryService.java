@@ -10,4 +10,5 @@ public interface CategoryService {
     void deleteCategory(String id);
     Category getCategoryById(String id);
     List<Category> getAllCategories();
+    long getCategoriesCount();
 }

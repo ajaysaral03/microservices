@@ -50,14 +50,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUserStatus(String id, String status) {
-        return null;
+        Integer intStatus;
+        try {
+            intStatus = Integer.parseInt(status);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid status value: " + status);
+        }
+        return updateUserStatus(id, intStatus);
     }
 
-    // ✅ Only status update
     @Override
     public User updateUserStatus(String id, Integer status) {
         User existing = getUserById(id);
         existing.setStatus(status);
         return userRepository.save(existing);
+    }
+
+    @Override
+    public long getUsersCount() {
+        return userRepository.count();
     }
 }

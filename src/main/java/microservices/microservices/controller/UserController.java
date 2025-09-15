@@ -83,4 +83,12 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(e.getMessage()));
         }
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<Long>> getUsersCount() {
+        long count = userService.getUsersCount();
+        return ResponseEntity.ok(new ApiResponse<>("Total users fetched successfully", count));
+    }
+
+
 }

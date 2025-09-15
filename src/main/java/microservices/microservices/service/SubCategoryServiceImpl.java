@@ -67,7 +67,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
-
+    // ✅ Count implementation
+    @Override
+    public long getSubCategoriesCount() {
+        return subCategoryRepository.count();
+    }
     // --------- Mapping Methods ----------
     private SubCategoryDto toDto(SubCategory entity) {
         return SubCategoryDto.builder()

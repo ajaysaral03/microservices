@@ -2,42 +2,44 @@ package microservices.microservices.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL) // ignore null fields in JSON
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private String message;
     private T data;
 
-    // No-args constructor (needed for JSON deserialization)
-    public ApiResponse() {
-    }
+    public ApiResponse() {}
 
-    // Constructor with message and data
     public ApiResponse(String message, T data) {
         this.message = message;
         this.data = data;
     }
 
-    // Constructor with message only
     public ApiResponse(String message) {
         this.message = message;
-        this.data = null;
     }
 
-    // Getters and setters
-    public String getMessage() {
-        return message;
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public T getData() { return data; }
+    public void setData(T data) { this.data = data; }
+
+    // Success helper
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return new ApiResponse<>(message, data);
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>(message, null);
     }
 
-    public T getData() {
-        return data;
+    // Error helper
+    public static <T> ApiResponse<T> error(String message, T data) {
+        return new ApiResponse<>(message, data);
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public static <T> ApiResponse<T> error(String message) {
+        return new ApiResponse<>(message, null);
     }
 }

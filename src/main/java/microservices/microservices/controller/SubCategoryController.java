@@ -1,5 +1,6 @@
 package microservices.microservices.controller;
 
+import microservices.microservices.dto.ApiResponse;
 import microservices.microservices.dto.SubCategoryDto;
 import microservices.microservices.service.SubCategoryService;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,11 @@ public class SubCategoryController {
     public ResponseEntity<List<SubCategoryDto>> getAll() {
         List<SubCategoryDto> subcategories = subCategoryService.getAllSubCategories();
         return ResponseEntity.ok(subcategories);
+    }
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<Long>> getSubCategoriesCount() {
+        long count = subCategoryService.getSubCategoriesCount();
+        ApiResponse<Long> response = new ApiResponse<>("Subcategories count fetched successfully", count);
+        return ResponseEntity.ok(response);
     }
 }

@@ -28,6 +28,7 @@ public class Product {
     private String description;
     private Double price;
     private Integer stock;
+
     private String image;
 
     private Status status = Status.active;
